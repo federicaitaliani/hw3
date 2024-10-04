@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Joe's Hotdog Stand</title>
+
+    <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif; 
+            text-align: center; 
+        }
+        .menu-item {
+            margin: 5px 0; 
+        }
+        .summary {
+            margin-top: 20px; 
+            text-align: center; 
+        }
+        h1{
+            text-align: center; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Joe's Hotdog Stand</h1>
+
+    <div id="menu" class="menu"></div>
+
+    <button onclick="processOrder()">Place Order</button>
+
+    <p id="order-summary"></p> 
+
+    <script>
+        const PRICES = [4.80, 3.95, 1.99]; 
+        const ITEMS = ["Hotdogs", "Fries", "Sodas"]; 
+
+        function showPrices(price) {
+            let priceString = price.toString();
+            let parts = priceString.split('.');
+
+            if (parts.length === 1) {
+                return '$' + priceString + '.00';
+            }
+
+            if (parts[1].length === 1) {
+                return '$' + priceString + '0';
+            }
+
+            return '$' + priceString;
+        }
+
+        function showMoney(amount) {
+            amount = Math.round(amount * 100);
+            amount = amount / 100;
+            let amountString = amount.toString();
+            let nums = amountString.split('.');
+            if (nums.length === 1) {
+            return amountString + '.00';
+        }
+            if (nums[1].length === 1) {
+                return amountString + '0';
+            }
+            return amountString;
+    }
+
+    function displayMenu(){
+        let menu = "<h2>Menu</h2>"; 
+        for (let i = 0; i < ITEMS.length; i++){
+            menu += `<div class='menu-item'>${ITEMS[i]}: ${showPrices(PRICES[i])}</div>`;
+        }
+        document.getElementById('menu').innerHTML = menu; 
+    }
+
+        displayMenu(); 
+
+        function processOrder() {
+            let numDogs = parseInt(prompt("How many hotdogs would you like?", 0)); 
+            let numFries = parseInt(prompt("How many fries would you like?", 0)); 
+            let numSoda = parseInt(prompt("How many sodas would you like?", 0)); 
+
+            let hotdogsTotal = showMoney(numDogs * PRICES[0]);
+            let friesTotal = showMoney(numFries * PRICES[1]);
+            let sodasTotal = showMoney(numSoda * PRICES[2]);
+
+            let subtotal = (numDogs * PRICES[0]) + (numFries * PRICES[1]) + (numSoda * PRICES[2]);
+
+            let discount = 0; 
+            if (subtotal >= 25) {
+                discount = subtotal * 0.10; 
+                subtotal = subtotal - discount;
+            }
+
+            const MEAL_TAX = 0.0625; 
+            let tax = subtotal * MEAL_TAX;
+            tax = Math.round(tax * 100) / 100; 
+            let finalTotal = subtotal + tax;
+            finalTotal = Math.round(finalTotal * 100) / 100; 
+
+            let roundedSubtotal = showMoney(subtotal);
+            let roundedDiscount = showMoney(discount);
+            let roundedTax = showMoney(tax);
+            let roundedFinalTotal = showMoney(finalTotal);
+            
+            let roundedHotdogsTotal = showMoney(hotdogsTotal);
+            let roundedFriesTotal = showMoney(friesTotal);
+            let roundedSodasTotal = showMoney(sodasTotal);
+
+            let orderSummary = `
+            <div class='summary'>
+                <strong>Order Summary:</strong><br></br> 
+                Hotdogs: ${numDogs} x ${showPrices(PRICES[0])} = $${roundedHotdogsTotal}<br></br>  
+                Fries: ${numFries} x ${showPrices(PRICES[1])} = $${roundedFriesTotal}<br></br> 
+                Sodas: ${numSoda} x ${showPrices(PRICES[2])} = $${roundedSodasTotal}<br></br>
+                Subtotal (before discount): $${showMoney(subtotal + discount)}<br></br> 
+                Discount: $${roundedDiscount}<br></br> 
+                Subtotal (after discount): $${roundedSubtotal}<br></br> 
+                Tax: $${roundedTax}<br></br> 
+                Final Total: $${roundedFinalTotal}
+            </div>`; 
+
+            document.getElementById('order-summary').innerHTML = orderSummary;
+        }
+    </script>
+
+</body>
+</html>
